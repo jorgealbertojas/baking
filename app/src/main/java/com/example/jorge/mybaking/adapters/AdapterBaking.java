@@ -2,15 +2,25 @@ package com.example.jorge.mybaking.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.jorge.mybaking.MainActivity;
 import com.example.jorge.mybaking.R;
+import com.example.jorge.mybaking.StepsListFragment;
 import com.example.jorge.mybaking.models.Baking;
 
+import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,11 +31,14 @@ import butterknife.ButterKnife;
  * Adapter for support recyclerView
  */
 
-public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBankingViewHolder> {
+public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBankingViewHolder>  {
 
     private List<Baking> data;
 
     private Context mContext;
+
+    private final String KEY_ADAPTER_STATE = "adapter_state";
+
 
 
     /*
@@ -44,11 +57,12 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
 
 
 
+
     /**
      * The interface that receives onClick messages.
      */
     public interface AdapterBankingOnClickHandler {
-        void onClick(Baking baking);
+        void onClick(View view);
     }
 
 
@@ -61,7 +75,7 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
     /**
      * Cache of the children views for a forecast list item.
      */
-    public class AdapterBankingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class AdapterBankingViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
 
         @BindView(R.id.tv_id)
         TextView mIdTextView;
@@ -71,6 +85,12 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
 
         @BindView(R.id.tv_serving)
         TextView mServingTextView;
+
+        @BindView(R.id.cv_card_view)
+        CardView mCarView;
+
+        @BindView(R.id.cl_constraint_layout)
+        ConstraintLayout mConstraintLayout;
 
 
 
@@ -83,19 +103,14 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
             ButterKnife.bind(this, view);
 
 
-            view.setOnClickListener(this);
+            view.setOnClickListener (this);
         }
 
-        /**
-         * This gets called by the child views during a click.
-         *
-         * @param v The View that was clicked
-         */
         @Override
-        public void onClick(View v) {
+        public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
             Baking baking = data.get(adapterPosition);
-            mClickHandler.onClick(baking);
+            mClickHandler.onClick(view);
         }
     }
 
@@ -137,6 +152,8 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
         holder.mIdTextView.setText(baking.getId());
         holder.mNameTextView.setText(baking.getName());
         holder.mServingTextView.setText(baking.getServings());
+        holder.mCarView.setTag(position);
+        holder.mConstraintLayout.setTag(position);
     }
 
 
@@ -159,6 +176,8 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
     public List<Baking> getData() {
         return data;
     }
+
+
 
 
 }

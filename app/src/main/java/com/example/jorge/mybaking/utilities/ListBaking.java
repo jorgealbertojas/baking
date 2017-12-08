@@ -28,18 +28,3 @@ public class ListBaking<T> implements Serializable{
 }
 
 
-/*public class ListBaking implements Serializable {
-    public int id;
-    public String name;
-    public int servings;
-    public String image;
-
-    public List<Ingredients> ingredients;
-
-    public List<Steps> steps;
-
-
-
-
-
-}*/

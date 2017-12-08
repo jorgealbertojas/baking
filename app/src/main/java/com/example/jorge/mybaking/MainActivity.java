@@ -1,10 +1,10 @@
 package com.example.jorge.mybaking;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -12,27 +12,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.example.jorge.mybaking.adapters.AdapterBaking;
 import com.example.jorge.mybaking.interfaces.InterfaceBaking;
 import com.example.jorge.mybaking.models.Baking;
+import com.example.jorge.mybaking.models.Steps;
 import com.example.jorge.mybaking.utilities.Common;
-import com.example.jorge.mybaking.utilities.ListBaking;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.jorge.mybaking.utilities.Utility.KEY_BUNDLE_BAKING;
+import static com.example.jorge.mybaking.utilities.Utility.KEY_INGREDIENTS;
+import static com.example.jorge.mybaking.utilities.Utility.KEY_LIST_BAKING;
+import static com.example.jorge.mybaking.utilities.Utility.KEY_POSITION;
 import static com.example.jorge.mybaking.utilities.Utility.URL_BASE;
 
 public class MainActivity extends AppCompatActivity implements AdapterBaking.AdapterBankingOnClickHandler{
@@ -166,11 +166,6 @@ public class MainActivity extends AppCompatActivity implements AdapterBaking.Ada
 
     };
 
-    @Override
-    public void onClick(Baking baking) {
-
-    }
-
 
     /**
      * Find Data the API Json with Retrofit
@@ -234,4 +229,23 @@ public class MainActivity extends AppCompatActivity implements AdapterBaking.Ada
     }
 
 
+    @Override
+    public void onClick(View view) {
+
+        mListBakingAdapter = (ArrayList<Baking>) mAdapterBanking.getData();
+
+        ArrayList<Baking> listBaking = new ArrayList<Baking>();
+
+        listBaking.add(mListBakingAdapter.get(Integer.parseInt(view.getTag().toString())));
+        String ingredientes = mListBakingAdapter.get(Integer.parseInt(view.getTag().toString())).getName();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_LIST_BAKING, (Serializable) listBaking);
+        bundle.putString(KEY_INGREDIENTS,ingredientes);
+
+        // Attach the Bundle to an intent
+        final Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(KEY_BUNDLE_BAKING,bundle);
+        startActivity(intent);
+    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
  * Model Baning
  */
 
-public class Baking  implements Serializable {
+public class Baking implements Serializable {
     private int id;
     private String name;
     private ArrayList<Ingredients> ingredients;
@@ -54,5 +54,17 @@ public class Baking  implements Serializable {
 
     public void setServings(int servings) {
         this.servings = servings;
+    }
+
+    public void setIngredients(ArrayList<Ingredients> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public ArrayList<Steps> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(ArrayList<Steps> steps) {
+        this.steps = steps;
     }
 }
