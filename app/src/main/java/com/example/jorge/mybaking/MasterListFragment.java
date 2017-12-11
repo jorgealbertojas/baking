@@ -30,7 +30,7 @@ import static com.example.jorge.mybaking.utilities.Utility.KEY_LIST_BAKING;
  */
 
 public class
-StepsListFragment extends Fragment {
+MasterListFragment extends Fragment {
 
     // Define a new interface OnImageClickListener that triggers a callback in the host activity
     OnImageClickListener mCallback;
@@ -46,7 +46,7 @@ StepsListFragment extends Fragment {
 
 
     // Mandatory empty constructor
-    public StepsListFragment() {
+    public MasterListFragment() {
     }
 
     // Override onAttach to make sure that the container activity has implemented the callback
