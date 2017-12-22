@@ -2,19 +2,15 @@ package com.example.jorge.mybaking;
 
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -38,7 +34,10 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import static com.example.jorge.mybaking.utilities.Utility.KEY_EXTRA_FILE;
+
+import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_FILE;
+import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_POSITION;
+import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_PREFERENCES;
 import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection.DEFAULT_BANDWIDTH_FRACTION;
 import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection.DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS;
 import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection.DEFAULT_MAX_INITIAL_BITRATE;
@@ -53,16 +52,14 @@ import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSel
 
 public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
 
-
-    private ProgressBar progressBar;
-
-    String mFile;
-
-
+    private String mFile;
+    private long mResumePosition = 0;
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
-
     private LinearLayout mLinearLayoutPlayPause;
+    private TrackSelector mTrackSelector;
+    private View mRootView;
+    private TrackSelection.Factory mVideoTrackSelectionFactory;
 
 
     /**
@@ -84,16 +81,11 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
         }
 
         // Inflate the Android-Me fragment layout
-        View rootView = inflater.inflate(R.layout.fragment_video, container, false);
-
-        /** Returns Put extra*/
-        Bundle extras = getActivity().getIntent().getExtras();
-
-
+        mRootView = inflater.inflate(R.layout.fragment_video, container, false);
 
         /** View Detail with event*/
 
-        mLinearLayoutPlayPause = (LinearLayout) rootView.findViewById(R.id.ll_play_pause);
+        mLinearLayoutPlayPause = (LinearLayout) mRootView.findViewById(R.id.ll_play_pause);
         mLinearLayoutPlayPause.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -106,58 +98,21 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
             }
         });
 
+        if (savedInstanceState != null) {
+            SharedPreferences settings = this.getActivity().getSharedPreferences(KEY_SHARED_PREFERENCES, 0);
+            mResumePosition = settings.getLong(KEY_SHARED_POSITION,0);
+            mFile = settings.getString(KEY_SHARED_FILE,"0");
+        }
+
+        View rootView = initializePlayer(mRootView);
 
 
 
-
-        // 1. Create a default TrackSelector
-        Handler mainHandler = new Handler();
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-
-        /*** 2. Put the best QUALITY*/
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter,DEFAULT_MAX_INITIAL_BITRATE, DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS, DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS, DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,DEFAULT_BANDWIDTH_FRACTION);
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-
-        // 3. Create a default LoadControl
-        LoadControl loadControl = new DefaultLoadControl();
-
-        // 4. Create the player
-        player = ExoPlayerFactory.newSimpleInstance(rootView.getContext(), trackSelector, loadControl);
-
-        simpleExoPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.player_view);
-        simpleExoPlayerView.setPlayer(player);
-
-        // Measures bandwidth during playback. Can be null if not required.
-        DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
-        // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
-                Util.getUserAgent(getContext(), "Exo2"), defaultBandwidthMeter);
-        // Produces Extractor instances for parsing the media data.
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        // This is the MediaSource representing the media to be played.
-
-
-        MediaSource mediaSource = null;
-        mediaSource = createPlayerSound(dataSourceFactory, extractorsFactory);
-        player.prepare(mediaSource);
-
-        player.addListener(this);
-        simpleExoPlayerView.requestFocus();
-        player.setPlayWhenReady(true);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         return rootView;
     }
 
 
 
-    /**
-     * Save the current state of this fragment
-     */
-    @Override
-    public void onSaveInstanceState(Bundle currentState) {
-      //  currentState.putIntegerArrayList(IMAGE_ID_LIST, (ArrayList<Integer>) mImageIds);
-      //  currentState.putInt(LIST_INDEX, mListIndex);
-    }
 
 
     public void setListIndex(String index) {
@@ -205,4 +160,127 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
     public void onPositionDiscontinuity() {
 
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (Util.SDK_INT > 23) {
+            initializePlayer(mRootView);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Util.SDK_INT <= 23 || player == null) {
+            initializePlayer(mRootView);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+            if (player != null) {
+                player.setPlayWhenReady(false); //to pause a video because now our video player is not in focus
+            }
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+            if (player != null) {
+                player.setPlayWhenReady(false); //to pause a video because now our video player is not in focus
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releaseAdsLoader();
+
+    }
+
+
+    private void releaseAdsLoader() {
+        if (player != null) {
+            player.release();
+            simpleExoPlayerView.getOverlayFrameLayout().removeAllViews();
+        }
+    }
+
+    private View initializePlayer(View rootView) {
+
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+
+        /*** 2. Put the best QUALITY*/
+        mVideoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter,DEFAULT_MAX_INITIAL_BITRATE, DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS, DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS, DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,DEFAULT_BANDWIDTH_FRACTION);
+        mTrackSelector = new DefaultTrackSelector(mVideoTrackSelectionFactory);
+
+        // 3. Create a default LoadControl
+        LoadControl loadControl = new DefaultLoadControl();
+
+        // 4. Create the player
+        player = ExoPlayerFactory.newSimpleInstance(rootView.getContext(), mTrackSelector, loadControl);
+
+        simpleExoPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.player_view);
+        simpleExoPlayerView.setPlayer(player);
+
+        if (mResumePosition > 0) {
+            player.seekTo(mResumePosition);
+        }
+
+        // Measures bandwidth during playback. Can be null if not required.
+        DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
+        // Produces DataSource instances through which media data is loaded.
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
+                Util.getUserAgent(getContext(), "Exo2"), defaultBandwidthMeter);
+        // Produces Extractor instances for parsing the media data.
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        // This is the MediaSource representing the media to be played.
+
+
+        MediaSource mediaSource = null;
+        mediaSource = createPlayerSound(dataSourceFactory, extractorsFactory);
+        player.prepare(mediaSource);
+
+        player.addListener(this);
+        simpleExoPlayerView.requestFocus();
+        player.setPlayWhenReady(true);
+        return rootView;
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            player.stop();
+            updateResumePosition();
+            player.release();
+            player = null;
+            mTrackSelector = null;
+            mVideoTrackSelectionFactory= null;
+
+        }
+    }
+
+    private void updateResumePosition() {
+        mResumePosition = player.getCurrentPosition();
+
+        SharedPreferences settings = this.getActivity().getSharedPreferences(KEY_SHARED_PREFERENCES, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong(KEY_SHARED_POSITION, mResumePosition);
+        editor.putString(KEY_SHARED_FILE, mFile);
+
+        // Commit the edits!
+        editor.commit();
+
+
+    }
+
 }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.jorge.mybaking.R;
 import com.example.jorge.mybaking.models.Steps;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ public class StepsListAdapter extends BaseAdapter {
         textView = new TextView(mContext);
         imageView = new ImageView(mContext);
         RelativeLayout relativeLayout = new RelativeLayout(mContext);
+        relativeLayout.setId(Integer.parseInt("1"));
 
         if (convertView == null) {
             // If the view is not recycled, this creates a new ImageView to hold an image
@@ -70,6 +72,14 @@ public class StepsListAdapter extends BaseAdapter {
             imageView.setImageResource(R.mipmap.ic_launcher);
             textView.setText(mListSteps.get(position).getDescription());
             textView.setPadding(150, 8, 8, 8);
+
+            if (!mListSteps.get(position).getThumbnailURL().equals("")) {
+                Picasso.with(mContext)
+                        .load(mListSteps.get(position).getThumbnailURL())
+                        .placeholder(R.mipmap.ic_launcher)
+                        .error(R.mipmap.ic_launcher)
+                        .into(imageView);
+            }
         } else {
             if (convertView.getClass().getName().equalsIgnoreCase("android.widget.RelativeLayout")) {
                 {

@@ -1,36 +1,27 @@
 package com.example.jorge.mybaking;
 
-import android.animation.Animator;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DragEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.AdaptiveMediaSourceEventListener;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -39,14 +30,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.io.IOException;
-
 import static com.example.jorge.mybaking.utilities.Utility.KEY_EXTRA_FILE;
+import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_POSITION;
+import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_PREFERENCES;
 import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection.DEFAULT_BANDWIDTH_FRACTION;
 import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection.DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS;
 import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection.DEFAULT_MAX_INITIAL_BITRATE;
@@ -61,19 +50,73 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayer.Event
 
     String mFile;
 
+    private TrackSelector trackSelector;
+
+    private long mResumePosition = 0;
+
 
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
 
     private LinearLayout mLinearLayoutPlayPause;
-
-
-
+    private TrackSelection.Factory videoTrackSelectionFactory;
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
+
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Util.SDK_INT <= 23 || player == null) {
+            initializePlayer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+            if (player != null) {
+                player.setPlayWhenReady(false); //to pause a video because now our video player is not in focus
+            }
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+            if (player != null) {
+                player.setPlayWhenReady(false); //to pause a video because now our video player is not in focus
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releaseAdsLoader();
+
+    }
+
+
+    private void releaseAdsLoader() {
+        if (player != null) {
+            player.release();
+            simpleExoPlayerView.getOverlayFrameLayout().removeAllViews();
+        }
+    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,17 +144,25 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayer.Event
             }
         });
 
+        if (savedInstanceState != null) {
+            SharedPreferences settings = getSharedPreferences(KEY_SHARED_PREFERENCES, 0);
+            mResumePosition = settings.getLong(KEY_SHARED_POSITION,0);
+
+        }
+        initializePlayer();
 
 
 
+    }
 
+
+    private void initializePlayer() {{
         // 1. Create a default TrackSelector
-        Handler mainHandler = new Handler();
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
 
         /*** 2. Put the best QUALITY*/
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter,DEFAULT_MAX_INITIAL_BITRATE, DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS, DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS, DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,DEFAULT_BANDWIDTH_FRACTION);
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+        videoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter,DEFAULT_MAX_INITIAL_BITRATE, DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS, DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS, DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,DEFAULT_BANDWIDTH_FRACTION);
+        trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
         // 3. Create a default LoadControl
         LoadControl loadControl = new DefaultLoadControl();
@@ -121,6 +172,14 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayer.Event
 
         simpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view);
         simpleExoPlayerView.setPlayer(player);
+
+
+
+
+
+        if (mResumePosition > 0) {
+            player.seekTo(mResumePosition);
+        }
 
         // Measures bandwidth during playback. Can be null if not required.
         DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
@@ -140,9 +199,7 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayer.Event
         simpleExoPlayerView.requestFocus();
         player.setPlayWhenReady(true);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-    }
-
+    }}
 
     /*** function return HlsMediaSource of the Sound*/
     private MediaSource createPlayerSound(DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory)  {
@@ -180,22 +237,9 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayer.Event
     }
 
 
-    /*** Listening Pause user */
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (player != null) {
-            player.setPlayWhenReady(false); //to pause a video because now our video player is not in focus
-        }
-    }
 
 
-    /*** Dextroy player */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        player.release();
-    }
+
 
     /*** Change Progreess an Control Player dependent of the Status */
     @Override
@@ -223,6 +267,36 @@ public class PlayerActivity extends AppCompatActivity implements ExoPlayer.Event
                 break;
         }
     }
+
+    private void releasePlayer() {
+        if (player != null) {
+            player.stop();
+            updateResumePosition();
+            player.release();
+            player = null;
+            trackSelector = null;
+            videoTrackSelectionFactory= null;
+
+        }
+    }
+
+    private void updateResumePosition() {
+        mResumePosition = player.getCurrentPosition();
+
+        SharedPreferences settings = getSharedPreferences(KEY_SHARED_PREFERENCES, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong(KEY_SHARED_POSITION, mResumePosition);
+
+        // Commit the edits!
+        editor.commit();
+
+
+    }
+
+
+
+
+
 
 
 

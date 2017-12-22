@@ -20,6 +20,11 @@ public class Utility {
 
     public final static String TAG = "informationDeBug";
 
+    // Key SharedPreferences
+    public static final String KEY_SHARED_PREFERENCES = "key_shared_preferences";
+    public static final String KEY_SHARED_POSITION = "key_shared_position";
+    public static final String KEY_SHARED_FILE = "key_shared_file";
+
 
 
 

@@ -29,8 +29,7 @@ import static com.example.jorge.mybaking.utilities.Utility.KEY_LIST_BAKING;
  * Created by jorge on 06/12/2017.
  */
 
-public class
-MasterListFragment extends Fragment {
+public class MasterListFragment extends Fragment {
 
     // Define a new interface OnImageClickListener that triggers a callback in the host activity
     OnImageClickListener mCallback;
@@ -86,8 +85,8 @@ MasterListFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.fragment_list_steps, container, false);
 
-        TextView textViewIngredients = (TextView) rootView.findViewById(R.id.tv_id_ingredients);
-        textViewIngredients.setText(ingredients);
+     //   TextView textViewIngredients = (TextView) rootView.findViewById(R.id.tv_id_ingredients);
+     //   textViewIngredients.setText(ingredients);
 
         // Get a reference to the GridView in the fragment_master_list xml layout file
         GridView gridView = (GridView) rootView.findViewById(R.id.gv_steps);
