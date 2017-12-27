@@ -35,6 +35,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_DURATION;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_FILE;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_POSITION;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_SHARED_PREFERENCES;
@@ -54,6 +55,7 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
 
     private String mFile;
     private long mResumePosition = 0;
+    private long mResumeDuration = 0;
     private SimpleExoPlayerView simpleExoPlayerView;
     private SimpleExoPlayer player;
     private LinearLayout mLinearLayoutPlayPause;
@@ -75,40 +77,47 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Load the saved state (the list of images and list index) if there is one
-        if(savedInstanceState != null) {
-           // mImageIds = savedInstanceState.getIntegerArrayList(IMAGE_ID_LIST);
-          // mListIndex = savedInstanceState.getInt(LIST_INDEX);
-        }
 
-        // Inflate the Android-Me fragment layout
         mRootView = inflater.inflate(R.layout.fragment_video, container, false);
 
-        /** View Detail with event*/
+        if(savedInstanceState == null) {
+            // Inflate the Android-Me fragment layout
+            mRootView = inflater.inflate(R.layout.fragment_video, container, false);
 
-        mLinearLayoutPlayPause = (LinearLayout) mRootView.findViewById(R.id.ll_play_pause);
-        mLinearLayoutPlayPause.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
-                String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
-                ClipData dragData = new ClipData(v.getTag().toString(),mimeTypes, item);
-                View.DragShadowBuilder myShadow = new View.DragShadowBuilder(mLinearLayoutPlayPause);
-                v.startDrag(dragData,myShadow,null,0);
-                return true;
-            }
+            /** View Detail with event*/
+
+            mLinearLayoutPlayPause = (LinearLayout) mRootView.findViewById(R.id.ll_play_pause);
+            mLinearLayoutPlayPause.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
+                    String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+                    ClipData dragData = new ClipData(v.getTag().toString(),mimeTypes, item);
+                    View.DragShadowBuilder myShadow = new View.DragShadowBuilder(mLinearLayoutPlayPause);
+                    v.startDrag(dragData,myShadow,null,0);
+                    return true;
+                }
         });
 
-        if (savedInstanceState != null) {
+
+
+            mRootView = initializePlayer(mRootView);
+        }else {
             SharedPreferences settings = this.getActivity().getSharedPreferences(KEY_SHARED_PREFERENCES, 0);
             mResumePosition = settings.getLong(KEY_SHARED_POSITION,0);
+            mResumeDuration = settings.getLong(KEY_SHARED_DURATION,0);
             mFile = settings.getString(KEY_SHARED_FILE,"0");
+            if (mResumePosition < mResumeDuration) {
+                player = null;
+                mRootView = initializePlayer(mRootView);
+
+            }
+
         }
 
-        View rootView = initializePlayer(mRootView);
 
 
-
-        return rootView;
+        return mRootView;
     }
 
 
@@ -271,10 +280,12 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
 
     private void updateResumePosition() {
         mResumePosition = player.getCurrentPosition();
+        mResumeDuration = player.getDuration();
 
         SharedPreferences settings = this.getActivity().getSharedPreferences(KEY_SHARED_PREFERENCES, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putLong(KEY_SHARED_POSITION, mResumePosition);
+        editor.putLong(KEY_SHARED_DURATION, mResumeDuration);
         editor.putString(KEY_SHARED_FILE, mFile);
 
         // Commit the edits!
