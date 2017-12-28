@@ -17,6 +17,7 @@ public class Utility {
     public static final String KEY_BUNDLE_BAKING = "key_bundle_baking";
     public static final String KEY_INGREDIENTS = "key_ingredients";
     public static final String KEY_EXTRA_FILE = "key_extra_file";
+    public static final String KEY_TWO_PANE = "key_two_pane";
 
     public final static String TAG = "informationDeBug";
 

@@ -7,10 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jorge.mybaking.R;
 import com.example.jorge.mybaking.models.Baking;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -76,6 +78,9 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
 
         @BindView(R.id.tv_serving)
         TextView mServingTextView;
+
+        @BindView(R.id.iv_baking)
+        ImageView mBakingImageView;
 
         @BindView(R.id.cv_card_view)
         CardView mCarView;
@@ -143,6 +148,14 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
         holder.mIdTextView.setText(baking.getId());
         holder.mNameTextView.setText(baking.getName());
         holder.mServingTextView.setText(baking.getServings());
+        if (!baking.getImage().equals("")) {
+          Picasso.with(mContext)
+                    .load(baking.getImage())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.mipmap.ic_launcher)
+                    .into(holder.mBakingImageView);
+       }
+
         holder.mCarView.setTag(position);
         holder.mConstraintLayout.setTag(position);
     }

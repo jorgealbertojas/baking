@@ -1,6 +1,5 @@
 package com.example.jorge.mybaking;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,16 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.example.jorge.mybaking.models.Baking;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import static com.example.jorge.mybaking.utilities.Utility.KEY_BUNDLE_BAKING;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_EXTRA_FILE;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_LIST_BAKING;
-import static com.example.jorge.mybaking.utilities.Utility.KEY_POSITION;
 
 /**
  * Created by jorge on 08/12/2017.
@@ -93,8 +87,7 @@ public class Part1Fragment extends Fragment {
      */
     @Override
     public void onSaveInstanceState(Bundle currentState) {
-     //   currentState.putIntegerArrayList(IMAGE_ID_LIST, (ArrayList<Integer>) mImageIds);
-     //   currentState.putInt(LIST_INDEX, mListIndex);
+
     }
 
     public void setListIndex(int index) {

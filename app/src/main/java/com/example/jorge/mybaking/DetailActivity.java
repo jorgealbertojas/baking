@@ -1,30 +1,27 @@
 package com.example.jorge.mybaking;
 
-import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import com.example.jorge.mybaking.adapters.StepsListAdapter;
 import com.example.jorge.mybaking.models.Baking;
+import com.example.jorge.mybaking.models.Steps;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static com.example.jorge.mybaking.utilities.Utility.KEY_BUNDLE_BAKING;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_INGREDIENTS;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_LIST_BAKING;
-import static com.example.jorge.mybaking.utilities.Utility.KEY_POSITION;
 
-public class DetailActivity extends AppCompatActivity  implements MasterListFragment.OnImageClickListener {
+public class DetailActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
     private ArrayList<Baking> mListBaking;
     private String mIngredients;
+    private RecyclerView mRecyclerView;
+    StepsListAdapter mAdapterListSteps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +38,11 @@ public class DetailActivity extends AppCompatActivity  implements MasterListFrag
             // This LinearLayout will only initially exist in the two-pane tablet case
             mTwoPane = true;
 
-            // Change the GridView to space out the images more on tablet
-            GridView gridView = (GridView) findViewById(R.id.gv_steps);
-            gridView.setNumColumns(1);
+
+
+            initRecyclerView(mListBaking.get(0).getSteps());
+
+            mRecyclerView.setAdapter(mAdapterListSteps);
 
 
             if(savedInstanceState == null) {
@@ -73,47 +72,21 @@ public class DetailActivity extends AppCompatActivity  implements MasterListFrag
     }
 
 
-    @Override
-    public void onImageSelected(int position) {
-
-        // Create a Toast that displays the position that was clicked
-        Toast.makeText(this, "Position clicked = " + position, Toast.LENGTH_SHORT).show();
-
-
-        // Handle the two-pane case and replace existing fragments right when a new image is selected from the master list
-        if (mTwoPane) {
-            // Create two=pane interaction
-            Part1Fragment part1Fragment = new Part1Fragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            part1Fragment.setListIndex(position);
-            fragmentManager.beginTransaction()
-                  .replace(R.id.part1_container, part1Fragment)
-                  .commit();
-
-            Part2Fragment part2Fragment = new Part2Fragment();
-            FragmentManager fragmentManager2 = getSupportFragmentManager();
-            part2Fragment.setListIndex(mListBaking.get(0).getSteps().get(position).getVideoURL());
-            fragmentManager2.beginTransaction()
-                    .replace(R.id.part2_container, part2Fragment)
-                    .commit();
 
 
 
+    private void initRecyclerView(ArrayList<Steps> listSteps) {
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_steps);
 
-        } else {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(KEY_LIST_BAKING, (Serializable) mListBaking);
-            bundle.putString(KEY_INGREDIENTS,mIngredients);
-            bundle.putInt(KEY_POSITION,position);
 
-            final Intent intent = new Intent(this, RecipeActivity.class);
-            intent.putExtra(KEY_BUNDLE_BAKING,bundle);
-            startActivity(intent);
-            }
-        }
-
+        mRecyclerView.setHasFixedSize(true);
+        mAdapterListSteps = new StepsListAdapter(listSteps, this);
     }
+
+
+}
 
 
 

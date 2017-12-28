@@ -2,13 +2,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_constraint_layout"
+    android:id="@+id/cl_constraint_layout_steps"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/cv_card_view"
+        android:id="@+id/cv_card_view_steps"
         android:layout_gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_id"
+                android:id="@+id/tv_id_steps"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:letterSpacing="0.5"
                 tools:layout_constraintTop_creator="1"
@@ -39,26 +39,26 @@
                 app:layout_constraintLeft_toLeftOf="parent" />
 
             <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/tv_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 app:layout_constraintTop_toBottomOf="@+id/tv_id" />
 
             <TextView
-                android:id="@+id/tv_serving"
+                android:id="@+id/tv_short_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
             <ImageView
-                android:id="@+id/iv_baking"
+                android:id="@+id/iv_thumbnail"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@mipmap/ic_launcher"
                 app:layout_constraintTop_toBottomOf="@+id/tv_serving" />
-                />
+            />
         </android.support.constraint.ConstraintLayout >
     </android.support.v7.widget.CardView>
 
