@@ -58,7 +58,7 @@ public StepsListAdapter(List<Steps> data, Context context) {
  * The interface that receives onClick messages.
  */
 public interface StepsListAdapterOnClickHandler {
-    void onClick(View view);
+    void onClick(Steps steps);
 }
 
 
@@ -109,7 +109,7 @@ public class StepsListAdapterViewHolder extends RecyclerView.ViewHolder  impleme
     public void onClick(View view) {
         int adapterPosition = getAdapterPosition();
         Steps steps = data.get(adapterPosition);
-        mClickHandler.onClick(view);
+        mClickHandler.onClick(steps);
     }
 }
 

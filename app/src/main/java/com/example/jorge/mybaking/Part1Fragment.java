@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import com.example.jorge.mybaking.models.Baking;
+import com.example.jorge.mybaking.models.Steps;
+
 import java.util.ArrayList;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_BUNDLE_BAKING;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_EXTRA_FILE;
@@ -25,8 +27,7 @@ public class Part1Fragment extends Fragment {
     private static final String TAG = "BodyPartFragment";
 
     // Variables to store a list of image resources and the index of the image that this fragment displays
-    private ArrayList<Baking> mListBaking;
-    private int mPosition = 0;
+    private Steps mSteps;
 
 
     /**
@@ -53,12 +54,8 @@ public class Part1Fragment extends Fragment {
         TextView textViewRecipe =  (TextView) rootView.findViewById(R.id.tv_recipe);
         Button buttonVideo =  (Button) rootView.findViewById(R.id.b_video);
 
-        Intent intent = getActivity().getIntent();
-        Bundle bundle = intent.getBundleExtra(KEY_BUNDLE_BAKING);
-        mListBaking = (ArrayList<Baking>) bundle.getSerializable(KEY_LIST_BAKING);
 
-
-        textViewRecipe.setText(mListBaking.get(0).getSteps().get(mPosition).getDescription());
+        textViewRecipe.setText(mSteps.getDescription());
 
 
             // Set a click listener on the image view
@@ -68,7 +65,7 @@ public class Part1Fragment extends Fragment {
 
                     Class destinationClass = PlayerActivity.class;
                     Intent intentToStartDetailActivity = new Intent(getContext(), destinationClass);
-                    intentToStartDetailActivity.putExtra(KEY_EXTRA_FILE, mListBaking.get(0).getSteps().get(mPosition).getVideoURL());
+                    intentToStartDetailActivity.putExtra(KEY_EXTRA_FILE, mSteps.getVideoURL());
                     startActivity(intentToStartDetailActivity);
 
                 }
@@ -90,8 +87,8 @@ public class Part1Fragment extends Fragment {
 
     }
 
-    public void setListIndex(int index) {
-        mPosition = index;
+    public void setListIndex(Steps steps) {
+      mSteps   = steps;
     }
 
 

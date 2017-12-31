@@ -32,10 +32,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_BUNDLE_BAKING;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_INGREDIENTS;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_LIST_BAKING;
-import static com.example.jorge.mybaking.utilities.Utility.KEY_POSITION;
 import static com.example.jorge.mybaking.utilities.Utility.URL_BASE;
 
-public class MainActivity extends AppCompatActivity implements AdapterBaking.AdapterBankingOnClickHandler{
+public class RecipesActivity extends AppCompatActivity implements AdapterBaking.AdapterBankingOnClickHandler{
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
 
@@ -186,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements AdapterBaking.Ada
     private void initRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_numbers);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(RecipesActivity.this));
 
 
         mRecyclerView.setHasFixedSize(true);
@@ -200,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements AdapterBaking.Ada
         // save RecyclerView state
         mBundleRecyclerViewState = new Bundle();
         mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
-        mListBakingAdapter = (ArrayList<Baking>) mAdapterBanking.getData();
+        mListBakingAdapter = (ArrayList<Baking>) mListBakingAdapter;
         mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, mListState);
         mBundleRecyclerViewState.putSerializable(KEY_ADAPTER_STATE, mListBakingAdapter);
     }
@@ -230,26 +229,17 @@ public class MainActivity extends AppCompatActivity implements AdapterBaking.Ada
 
 
     @Override
-    public void onClick(View view) {
+    public void onClick(List<Steps> steps) {
+        String ingredients = mAdapterBanking.getNameRecipites();
 
-        mListBakingAdapter = (ArrayList<Baking>) mAdapterBanking.getData();
-
-        ArrayList<Baking> listBaking = new ArrayList<Baking>();
-
-        listBaking.add(mListBakingAdapter.get(Integer.parseInt(view.getTag().toString())));
-        String ingredientes = mListBakingAdapter.get(Integer.parseInt(view.getTag().toString())).getName();
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_LIST_BAKING, (Serializable) listBaking);
-        bundle.putString(KEY_INGREDIENTS,ingredientes);
+        bundle.putSerializable(KEY_LIST_BAKING, (Serializable) steps);
+        bundle.putString(KEY_INGREDIENTS,ingredients);
 
         // Attach the Bundle to an intent
-        final Intent intent = new Intent(this, DetailActivity.class);
+        final Intent intent = new Intent(this, IngredientsActivity.class);
         intent.putExtra(KEY_BUNDLE_BAKING,bundle);
         startActivity(intent);
     }
-
-
-
-
 }

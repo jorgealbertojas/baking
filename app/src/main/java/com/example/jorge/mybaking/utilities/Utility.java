@@ -19,6 +19,13 @@ public class Utility {
     public static final String KEY_EXTRA_FILE = "key_extra_file";
     public static final String KEY_TWO_PANE = "key_two_pane";
 
+    public static final String KEY_LIST_BAKING_INGREDIENTS = "key_list_baking";
+    public static final String KEY_POSITION_INGREDIENTS = "key_position";
+    public static final String KEY_BUNDLE_BAKING_INGREDIENTS = "key_bundle_baking";
+    public static final String KEY_INGREDIENTS_INGREDIENTS = "key_ingredients";
+    public static final String KEY_EXTRA_FILE_INGREDIENTS = "key_extra_file";
+
+
     public final static String TAG = "informationDeBug";
 
     // Key SharedPreferences

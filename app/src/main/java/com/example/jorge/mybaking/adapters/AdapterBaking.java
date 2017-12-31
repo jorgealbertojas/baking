@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.jorge.mybaking.R;
 import com.example.jorge.mybaking.models.Baking;
+import com.example.jorge.mybaking.models.Steps;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -27,6 +28,8 @@ import butterknife.ButterKnife;
 public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBankingViewHolder>  {
 
     private List<Baking> data;
+
+    private String mNameRecipites;
 
     private Context mContext;
 
@@ -55,15 +58,13 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
      * The interface that receives onClick messages.
      */
     public interface AdapterBankingOnClickHandler {
-        void onClick(View view);
+        void onClick(List<Steps> steps);
     }
 
 
 
 
-    public AdapterBaking(List<Baking> data) {
-        this.data = data;
-    }
+
 
     /**
      * Cache of the children views for a forecast list item.
@@ -106,7 +107,7 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
             Baking baking = data.get(adapterPosition);
-            mClickHandler.onClick(view);
+            mClickHandler.onClick(baking.getSteps());
         }
     }
 
@@ -145,6 +146,9 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
     @Override
     public void onBindViewHolder(AdapterBaking.AdapterBankingViewHolder holder, int position) {
         Baking baking = ((Baking) data.get(position));
+
+        mNameRecipites = baking.getName();
+
         holder.mIdTextView.setText(baking.getId());
         holder.mNameTextView.setText(baking.getName());
         holder.mServingTextView.setText(baking.getServings());
@@ -177,8 +181,8 @@ public class AdapterBaking extends RecyclerView.Adapter<AdapterBaking.AdapterBan
         return data.size();
     }
 
-    public List<Baking> getData() {
-        return data;
+    public String getNameRecipites() {
+        return mNameRecipites;
     }
 
 

@@ -15,7 +15,7 @@ import static com.example.jorge.mybaking.utilities.Utility.KEY_BUNDLE_BAKING;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_INGREDIENTS;
 import static com.example.jorge.mybaking.utilities.Utility.KEY_LIST_BAKING;
 
-public class DetailActivity extends AppCompatActivity {
+public class IngredientsActivity extends AppCompatActivity {
 
     private boolean mTwoPane;
     private ArrayList<Baking> mListBaking;
@@ -53,7 +53,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 // New body fragment
                 Part1Fragment part1Fragment = new Part1Fragment();
-                part1Fragment.setListIndex(0);
+                part1Fragment.setListIndex(mListBaking.get(0).getSteps().get(0));
                 fragmentManager.beginTransaction()
                         .add(R.id.part1_container, part1Fragment)
                         .commit();
