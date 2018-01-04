@@ -4,6 +4,7 @@
     android:initialLayout="@layout/widget_layout"
     android:minHeight="72dp"
     android:minWidth="300dp"
+    android:configure="in.wptrafficanalyzer.appwidgetclockconfiguration.WidgetConfigurationActivity"
     android:updatePeriodMillis="300000" >
 
 </appwidget-provider>

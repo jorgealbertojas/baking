@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -46,12 +46,11 @@ import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSel
 import static com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection.DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS;
 
 
-
 /**
  * Created by jorge on 08/12/2017.
  */
 
-public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
+public class VideoIngredientsFragment extends Fragment implements ExoPlayer.EventListener {
 
     private String mFile;
     private long mResumePosition = 0;
@@ -67,7 +66,7 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the fragment
      */
-    public Part2Fragment() {
+    public VideoIngredientsFragment() {
     }
 
     /**
@@ -80,7 +79,7 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
 
         mRootView = inflater.inflate(R.layout.fragment_video, container, false);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             // Inflate the Android-Me fragment layout
             mRootView = inflater.inflate(R.layout.fragment_video, container, false);
 
@@ -90,23 +89,20 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
             mLinearLayoutPlayPause.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    ClipData.Item item = new ClipData.Item((CharSequence)v.getTag());
+                    ClipData.Item item = new ClipData.Item((CharSequence) v.getTag());
                     String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
-                    ClipData dragData = new ClipData(v.getTag().toString(),mimeTypes, item);
+                    ClipData dragData = new ClipData(v.getTag().toString(), mimeTypes, item);
                     View.DragShadowBuilder myShadow = new View.DragShadowBuilder(mLinearLayoutPlayPause);
-                    v.startDrag(dragData,myShadow,null,0);
+                    v.startDrag(dragData, myShadow, null, 0);
                     return true;
                 }
-        });
-
-
-
+            });
             mRootView = initializePlayer(mRootView);
-        }else {
+        } else {
             SharedPreferences settings = this.getActivity().getSharedPreferences(KEY_SHARED_PREFERENCES, 0);
-            mResumePosition = settings.getLong(KEY_SHARED_POSITION,0);
-            mResumeDuration = settings.getLong(KEY_SHARED_DURATION,0);
-            mFile = settings.getString(KEY_SHARED_FILE,"0");
+            mResumePosition = settings.getLong(KEY_SHARED_POSITION, 0);
+            mResumeDuration = settings.getLong(KEY_SHARED_DURATION, 0);
+            mFile = settings.getString(KEY_SHARED_FILE, "0");
             if (mResumePosition < mResumeDuration) {
                 player = null;
                 mRootView = initializePlayer(mRootView);
@@ -116,13 +112,8 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
         }
 
 
-
         return mRootView;
     }
-
-
-
-
 
     public void setListIndex(String index) {
         mFile = index;
@@ -130,13 +121,13 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
 
 
     /*** function return HlsMediaSource of the Sound*/
-    private MediaSource createPlayerSound(DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory)  {
+    private MediaSource createPlayerSound(DataSource.Factory dataSourceFactory, ExtractorsFactory extractorsFactory) {
         MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(mFile),
                 dataSourceFactory,
                 extractorsFactory,
                 null,
                 null);
-        return  mediaSource;
+        return mediaSource;
     }
 
 
@@ -175,17 +166,12 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
     public void onStart() {
         super.onStart();
 
-        if (Util.SDK_INT > 23) {
-            initializePlayer(mRootView);
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (Util.SDK_INT <= 23 || player == null) {
-            initializePlayer(mRootView);
-        }
+
     }
 
     @Override
@@ -230,7 +216,7 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
 
         /*** 2. Put the best QUALITY*/
-        mVideoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter,DEFAULT_MAX_INITIAL_BITRATE, DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS, DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS, DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS,DEFAULT_BANDWIDTH_FRACTION);
+        mVideoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(bandwidthMeter, DEFAULT_MAX_INITIAL_BITRATE, DEFAULT_MIN_DURATION_FOR_QUALITY_INCREASE_MS, DEFAULT_MAX_DURATION_FOR_QUALITY_DECREASE_MS, DEFAULT_MIN_DURATION_TO_RETAIN_AFTER_DISCARD_MS, DEFAULT_BANDWIDTH_FRACTION);
         mTrackSelector = new DefaultTrackSelector(mVideoTrackSelectionFactory);
 
         // 3. Create a default LoadControl
@@ -273,7 +259,7 @@ public class Part2Fragment extends Fragment implements ExoPlayer.EventListener{
             player.release();
             player = null;
             mTrackSelector = null;
-            mVideoTrackSelectionFactory= null;
+            mVideoTrackSelectionFactory = null;
 
         }
     }

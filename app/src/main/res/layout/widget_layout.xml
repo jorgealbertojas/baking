@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dip"
-    android:background="@drawable/myshape" >
+    android:orientation="vertical"
+    android:background="@drawable/myshape">
 
     <TextView
         android:id="@+id/update"
@@ -13,9 +14,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_margin="4dip"
-        android:scrollbars="vertical"
-        android:text="Static Textoooooo" >
-    </TextView>
-
+         android:scrollbars="vertical"/>
 
 </LinearLayout>

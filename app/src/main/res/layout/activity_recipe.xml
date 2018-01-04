@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+
+<RelativeLayout
+
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/android_me_linear_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.jorge.mybaking.RecipeActivity">
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    >
 
-    <!-- LinearLayout for holding three Android-Me images -->
-    <LinearLayout
-        android:id="@+id/android_me_linear_layout"
+    <Button
+        android:id="@+id/b_next_recipe"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:text="Next" />
+
+    <FrameLayout
+        android:id="@+id/part1_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="vertical"
->
+        android:layout_height="180dp"
+        android:layout_below="@id/b_next_recipe"
+        android:scaleType="centerInside" />
+
+    <FrameLayout
+        android:id="@+id/part2_container"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/part1_container"
+        android:scaleType="centerInside" />
 
 
-        <!-- Three containers for each Android-Me body part -->
-        <!-- This container holds the head BodyPartFragment of the custom Android-Me image -->
-        <FrameLayout android:id="@+id/part1_container"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside"/>
+</RelativeLayout>
 
-        <!-- The remaining containers for the body and leg BodyPartFragments -->
-        <FrameLayout android:id="@+id/part2_container"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerInside"/>
-
-
-
-    </LinearLayout>
-
-</ScrollView>

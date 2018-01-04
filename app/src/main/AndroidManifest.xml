@@ -20,16 +20,27 @@
             </intent-filter>
         </activity>
         <activity
-        android:name=".IngredientsActivity"
+            android:name=".IngredientsActivity"
+            android:launchMode="singleTop"
             android:noHistory="false"
-        android:parentActivityName=".RecipesActivity">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".RecipesActivity" />
-    </activity>
+            android:parentActivityName=".RecipesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RecipesActivity" />
+        </activity>
 
         <activity
-            android:name=".RecipeActivity"
+            android:name=".VideoWithInformationActivity"
+            android:launchMode="singleTop"
+            android:noHistory="false"
+            android:parentActivityName=".IngredientsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".IngredientsActivity" />
+        </activity>
+
+        <activity
+            android:name=".PlayerActivity"
             android:parentActivityName=".IngredientsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -37,12 +48,9 @@
         </activity>
 
 
-        <activity android:name=".PlayerActivity"></activity>
-
-        <receiver android:name=".widgets.MyWidgetProvider" >
-            <intent-filter >
-                <action
-                    android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <receiver android:name=".widgets.MyWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
@@ -50,8 +58,15 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-    </application>
+        <receiver android:name="AnalogClockWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
 
+    </application>
 
 
 </manifest>

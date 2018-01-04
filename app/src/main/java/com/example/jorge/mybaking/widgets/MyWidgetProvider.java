@@ -7,12 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.jorge.mybaking.R;
-import com.example.jorge.mybaking.adapters.AdapterBaking;
 import com.example.jorge.mybaking.interfaces.InterfaceBaking;
 import com.example.jorge.mybaking.models.Baking;
 import com.example.jorge.mybaking.utilities.Common;
@@ -37,13 +35,39 @@ import static com.example.jorge.mybaking.utilities.Utility.URL_BASE;
 
 public class MyWidgetProvider extends AppWidgetProvider {
 
-    private static final String ACTION_CLICK = "ACTION_CLICK";
-
     private InterfaceBaking mInterfaceBanking;
     private Context mContext;
     private AppWidgetManager mAppWidgetManager;
-    private int [] mAppWidgetIds;
+    private int[] mAppWidgetIds;
+    /**
+     * Call Get InformationNew Movies .
+     */
+    private Callback<List<Baking>> bakingCallback = new Callback<List<Baking>>() {
+        @Override
+        public void onResponse(Call<List<Baking>> call, Response<List<Baking>> response) {
+            try {
+                if (response.isSuccessful()) {
+                    List<Baking> data = new ArrayList<>();
 
+                    data.addAll(response.body());
+
+                    putDataWidget(mContext, mAppWidgetManager, mAppWidgetIds, data);
+
+
+                } else {
+                    Log.d("QuestionsCallback", "Code: " + response.code() + " Message: " + response.message());
+                }
+            } catch (NullPointerException e) {
+                System.out.println("onActivityResult consume crashed");
+
+            }
+        }
+
+        @Override
+        public void onFailure(Call<List<Baking>> call, Throwable t) {
+
+        }
+    };
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
@@ -63,40 +87,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
             toast.show();
         }
 
-
-
     }
-
-    /**
-     * Call Get InformationNew Movies .
-     */
-    private Callback<List<Baking>> bakingCallback = new Callback<List<Baking>>() {
-        @Override
-        public void onResponse(Call<List<Baking>> call, Response<List<Baking>> response) {
-            try {
-                if (response.isSuccessful()) {
-                    List<Baking> data = new ArrayList<>();
-
-                    data.addAll(response.body());
-
-                    putDataWidget(mContext,mAppWidgetManager, mAppWidgetIds,data );
-
-
-                } else {
-                    Log.d("QuestionsCallback", "Code: " + response.code() + " Message: " + response.message());
-                }
-            } catch (NullPointerException e) {
-                System.out.println("onActivityResult consume crashed");
-
-            }
-        }
-
-        @Override
-        public void onFailure(Call<List<Baking>> call, Throwable t) {
-
-        }
-    };
-
 
     /**
      * Find Data the API Json with Retrofit
@@ -115,8 +106,7 @@ public class MyWidgetProvider extends AppWidgetProvider {
     }
 
 
-
-    private void putDataWidget(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, List<Baking> listBaking){
+    private void putDataWidget(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, List<Baking> listBaking) {
         // Get all ids
         ComponentName thisWidget = new ComponentName(context,
                 MyWidgetProvider.class);
@@ -125,29 +115,25 @@ public class MyWidgetProvider extends AppWidgetProvider {
 
         int x = 0;
 
-       // allWidgetIds[] = listBaking.size();
 
         for (int widgetId : allWidgetIds) {
             // create some random data
 
-            x = (new Random().nextInt(listBaking.size()-1));
+            x = (new Random().nextInt(listBaking.size() - 1));
 
             String ingredients = "";
             ingredients = listBaking.get(x).getName() + "\n\n";
 
-            for (int i =0 ; i < listBaking.get(x).getIngredients().size() ; i++){
+            for (int i = 0; i < listBaking.get(x).getIngredients().size(); i++) {
                 ingredients = ingredients + listBaking.get(x).getIngredients().get(i).getQuantity() + " - " + listBaking.get(x).getIngredients().get(i).getIngredient() + "\n";
+
             }
-
-
-
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                     R.layout.widget_layout);
             Log.w("WidgetExample", (ingredients));
             // Set the text
             remoteViews.setTextViewText(R.id.update, (ingredients));
-
 
             // Register an onClickListener
             Intent intent = new Intent(context, MyWidgetProvider.class);
@@ -161,7 +147,6 @@ public class MyWidgetProvider extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }
-
 
 
 }

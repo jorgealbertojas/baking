@@ -24,6 +24,8 @@ public class Utility {
     public static final String KEY_BUNDLE_BAKING_INGREDIENTS = "key_bundle_baking";
     public static final String KEY_INGREDIENTS_INGREDIENTS = "key_ingredients";
     public static final String KEY_EXTRA_FILE_INGREDIENTS = "key_extra_file";
+    public static final String KEY_EXTRA_LIST_STEPS = "key_extra_steps";
+    public static final String KEY_EXTRA_LIST_STEPS_BUNDLE = "key_extra_steps_bundle";
 
 
     public final static String TAG = "informationDeBug";
