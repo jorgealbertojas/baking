@@ -5,6 +5,8 @@
     </string>
     <string name="Error_Access">No access internet</string>
     <string name="Error_Access_empty">Data empty! There were problems consuming the Assets, please use RESTORE button.</string>
+    <string name="ImageSteps">Image Steps</string>
+    <string name="Next">Next</string>
 
 
 </resources>

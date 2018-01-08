@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -45,7 +46,7 @@ public class RecipesActivityTest2 {
                         RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -63,6 +64,8 @@ public class RecipesActivityTest2 {
             e.printStackTrace();
         }
 
+
+
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.b_next_recipe), withText("Next"),
                         childAtPosition(
@@ -71,16 +74,39 @@ public class RecipesActivityTest2 {
                                                 withId(android.R.id.content),
                                                 0)),
                                 0),
-                        isDisplayed()));
+                        isDisplayed())).check(matches(isDisplayed()));
+
         appCompatButton.perform(click());
 
+
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.b_next_recipe), withText("Next 2"),
+                        childAtPosition(
+                                allOf(withId(R.id.android_me_linear_layout),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                0),
+                        isDisplayed())).check(matches(isDisplayed()));
+        appCompatButton2.perform(click());
+
+
         try {
-            Thread.sleep(20000);
+            Thread.sleep(30000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        appCompatButton.perform(click());
+        ViewInteraction appCompatButton3 = onView(
+                allOf(withId(R.id.b_next_recipe), withText("Next 3"),
+                        childAtPosition(
+                                allOf(withId(R.id.android_me_linear_layout),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                0),
+                        isDisplayed())).check(matches(isDisplayed()));
+        appCompatButton3.perform(click());
 
         try {
             Thread.sleep(20000);

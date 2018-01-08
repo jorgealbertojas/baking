@@ -1,5 +1,6 @@
 package com.example.jorge.mybaking;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -28,11 +29,20 @@ public class VideoWithInformationActivity extends AppCompatActivity {
         bNextRecipe.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
+
+
+
                 if (mPosition < mListSteps.size() - 1) {
-                    mPosition++;
+                     mPosition++;
+                     String nameButton =  getResources().getString(R.string.Next).toString();
+                     String positionButton = Integer.toString(mPosition + 1);
+                     ((Button) v).setText(nameButton + " "+ positionButton);
                 } else {
                     mPosition = 0;
+                    ((Button) v).setText(Resources.getSystem().getText(R.string.Next));
                 }
+
+
 
                 getDataIngredients(mPosition);
             }
