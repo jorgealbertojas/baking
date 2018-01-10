@@ -122,18 +122,20 @@ public class MyWidgetProvider extends AppWidgetProvider {
             x = (new Random().nextInt(listBaking.size() - 1));
 
             String ingredients = "";
-            ingredients = listBaking.get(x).getName() + "\n\n";
+            String ingredientsName = listBaking.get(x).getName() ;
 
             for (int i = 0; i < listBaking.get(x).getIngredients().size(); i++) {
-                ingredients = ingredients + listBaking.get(x).getIngredients().get(i).getQuantity() + " - " + listBaking.get(x).getIngredients().get(i).getIngredient() + "\n";
-
+                ingredients = ingredients + "  (" + Integer.toString(i) + ") " + listBaking.get(x).getIngredients().get(i).getQuantity() + " - " + listBaking.get(x).getIngredients().get(i).getIngredient();
             }
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                     R.layout.widget_layout);
-            Log.w("WidgetExample", (ingredients));
+
             // Set the text
             remoteViews.setTextViewText(R.id.update, (ingredients));
+
+            remoteViews.setTextViewText(R.id.empty_view, (ingredientsName));
+
 
             // Register an onClickListener
             Intent intent = new Intent(context, MyWidgetProvider.class);
@@ -144,6 +146,9 @@ public class MyWidgetProvider extends AppWidgetProvider {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                     0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.empty_view, pendingIntent);
+
+
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
     }

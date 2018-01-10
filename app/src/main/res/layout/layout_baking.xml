@@ -29,10 +29,10 @@
                 android:id="@+id/tv_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
+                 android:text="tv_id"
                 android:letterSpacing="0.5"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_baking"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_constraintLeft_creator="1"
                 tools:layout_constraintTop_creator="1" />
@@ -41,20 +41,31 @@
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="tv_name"
+                app:layout_constraintStart_toEndOf="@+id/tv_id"
                 app:layout_constraintTop_toBottomOf="@+id/tv_id" />
 
             <TextView
                 android:id="@+id/tv_serving"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="tv_serving"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_baking"
                 app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
             <ImageView
                 android:id="@+id/iv_baking"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_marginTop="8dp"
                 android:src="@mipmap/ic_launcher"
-                app:layout_constraintTop_toBottomOf="@+id/tv_serving" />
+                app:layout_constraintTop_toTopOf="parent" />
 
 
         </android.support.constraint.ConstraintLayout>

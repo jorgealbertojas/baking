@@ -39,7 +39,7 @@ public class VideoWithInformationActivity extends AppCompatActivity {
                      ((Button) v).setText(nameButton + " "+ positionButton);
                 } else {
                     mPosition = 0;
-                    ((Button) v).setText(Resources.getSystem().getText(R.string.Next));
+                    ((Button) v).setText(getResources().getString(R.string.Next).toString());
                 }
 
 

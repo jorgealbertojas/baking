@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
     android:layout_width="match_parent"
@@ -7,13 +8,29 @@
     android:orientation="vertical"
     android:background="@drawable/myshape">
 
+
     <TextView
-        android:id="@+id/update"
-        style="@android:style/TextAppearance.Medium"
+        android:id="@+id/empty_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_margin="4dip"
-         android:scrollbars="vertical"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:scrollbars="vertical"
+        android:textColor="#ffffff"
+        android:textSize="40sp" />
+
+    <TextView android:id="@+id/update" android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit ="marquee_forever"
+        android:scrollHorizontally="true"
+        android:textSize="30sp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:duplicateParentState="true">
+        <requestFocus android:focusable="true" android:focusableInTouchMode="true"
+            android:duplicateParentState="true" />
+    </TextView>
+
 
 </LinearLayout>
